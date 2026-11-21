@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { env } from './env';
 
 export interface Storage {
   mode: 'local' | 'github';
@@ -80,10 +81,10 @@ function githubStorage(token: string, repo: string, branch: string): Storage {
 }
 
 export function getStorage(): Storage {
-  const token = import.meta.env.GITHUB_TOKEN ?? process.env.GITHUB_TOKEN;
+  const token = env('GITHUB_TOKEN');
   if (token) {
-    const repo = import.meta.env.GITHUB_REPO ?? process.env.GITHUB_REPO ?? 'shohansk/shohan-site';
-    const branch = import.meta.env.GITHUB_BRANCH ?? process.env.GITHUB_BRANCH ?? 'main';
+    const repo = env('GITHUB_REPO') ?? 'shohansk/shohan-site';
+    const branch = env('GITHUB_BRANCH') ?? 'main';
     return githubStorage(token, repo, branch);
   }
   if (import.meta.env.PROD) throw new Error('Live editing is off: set GITHUB_TOKEN in Vercel to save from the live site.');

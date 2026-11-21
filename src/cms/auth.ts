@@ -1,10 +1,10 @@
 import crypto from 'node:crypto';
 import type { AstroCookies } from 'astro';
+import { env } from './env';
 
 const COOKIE = 'admin_session';
 const MAX_AGE = 60 * 60 * 24 * 7;
 
-const env = (k: string) => (import.meta.env[k] as string | undefined) ?? process.env[k];
 
 function secret() {
   const s = env('SESSION_SECRET') ?? env('ADMIN_PASSWORD');
