@@ -23,7 +23,15 @@ function clean(s: Section, entry: Entry): Entry {
   return out;
 }
 
-export const GET: APIRoute = async ({ cookies }) => {
+const guard = (handler: APIRoute): APIRoute => async (ctx) => {
+  try {
+    return await handler(ctx);
+  } catch (e) {
+    return json({ error: (e as Error).message }, 502);
+  }
+};
+
+export const GET: APIRoute = guard(async ({ cookies }) => {
   if (!isAuthed(cookies)) return unauthorized();
   const store = getStorage();
   const data: Record<string, unknown> = {};
@@ -33,9 +41,9 @@ export const GET: APIRoute = async ({ cookies }) => {
     }),
   );
   return json({ mode: store.mode, data });
-};
+});
 
-export const PUT: APIRoute = async ({ request, cookies }) => {
+export const PUT: APIRoute = guard(async ({ request, cookies }) => {
   if (!isAuthed(cookies)) return unauthorized();
   const body = (await request.json()) as { section: string; slug?: string; entry: Entry };
   const s = sectionById(body.section);
@@ -60,13 +68,13 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
   if (!/^[\w-]+$/.test(slug)) return json({ error: 'Bad slug.' }, 400);
   await store.write(`${s.path}/${slug}${fileExt(s)}`, encode(s, entry), `content: ${body.slug ? 'update' : 'add'} ${s.label} "${entry.title}"`);
   return json({ ok: true, slug, entry });
-};
+});
 
-export const DELETE: APIRoute = async ({ request, cookies }) => {
+export const DELETE: APIRoute = guard(async ({ request, cookies }) => {
   if (!isAuthed(cookies)) return unauthorized();
   const { section, slug } = (await request.json()) as { section: string; slug: string };
   const s = sectionById(section);
   if (!s || s.kind !== 'collection' || !/^[\w-]+$/.test(slug)) return json({ error: 'Bad request.' }, 400);
   await getStorage().remove(`${s.path}/${slug}${fileExt(s)}`, `content: delete ${s.label} "${slug}"`);
   return json({ ok: true });
-};
+});

@@ -46,6 +46,8 @@ function githubStorage(token: string, repo: string, branch: string): Storage {
 
   const call = async (url: string, init: RequestInit = {}) => {
     const res = await fetch(url, { ...init, headers: { ...headers, ...(init.headers ?? {}) } });
+    if (res.status === 401) throw new Error('GitHub rejected the token (expired or wrong). Update GITHUB_TOKEN in Vercel.');
+    if (res.status === 403) throw new Error(`GitHub token can't write to ${repo}. Give it "Contents: Read and write" on that repo.`);
     if (!res.ok && res.status !== 404) throw new Error(`GitHub ${res.status}: ${await res.text()}`);
     return res;
   };

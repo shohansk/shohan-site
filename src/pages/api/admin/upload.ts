@@ -21,6 +21,10 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   const base = (dot > 0 ? file.name.slice(0, dot) : file.name).toLowerCase().replace(/[^\w-]+/g, '-').replace(/-+/g, '-').slice(0, 60) || 'file';
   const ext = (dot > 0 ? file.name.slice(dot + 1) : 'bin').toLowerCase().replace(/[^a-z0-9]/g, '');
   const name = `${base}.${ext}`;
-  await getStorage().write(`${dir}/${name}`, Buffer.from(await file.arrayBuffer()), `content: upload ${name}`);
+  try {
+    await getStorage().write(`${dir}/${name}`, Buffer.from(await file.arrayBuffer()), `content: upload ${name}`);
+  } catch (e) {
+    return json({ error: (e as Error).message }, 502);
+  }
   return json({ path: `/${dir.replace(/^public\//, '')}/${name}` });
 };
