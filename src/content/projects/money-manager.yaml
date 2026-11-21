@@ -1,13 +1,10 @@
-title: Money Manager
 order: 2
+title: Money Manager
 size: featured
 screenshotStyle: phone
 kind: Android & iPhone app
 stack: react 19 · typescript · capacitor · sqlite
-summary: >-
-  A private, offline personal finance app: expenses, income, budgets,
-  investments with profit and ROI, loans and savings goals. No account, no
-  server, no ads — every number stays on the phone.
+summary: "A private, offline personal finance app: expenses, income, budgets, investments with profit and ROI, loans and savings goals. No account, no server, no ads — every number stays on the phone."
 bullets:
   - Money stored as integer thousandths, so totals never drift
   - Balances, budgets and ROI derived from entries, never stored
