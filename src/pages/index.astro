@@ -4,7 +4,7 @@ import Nav from '../components/Nav.astro';
 import Icon from '../components/Icon.astro';
 import { loadSite } from '../lib/content';
 
-const { profile: p, vaylo: v, capabilities, projects, experience, posts } = await loadSite();
+const { profile: p, vaylo: v, capabilities, projects, experience, posts } = loadSite();
 const featured = projects.filter((x) => x.entry.size === 'featured');
 const medium = projects.filter((x) => x.entry.size === 'medium');
 const small = projects.filter((x) => x.entry.size === 'small');

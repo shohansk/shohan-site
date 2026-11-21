@@ -1,42 +1,53 @@
-import { createReader } from '@keystatic/core/reader';
+import fs from 'node:fs';
+import path from 'node:path';
 import Markdoc from '@markdoc/markdoc';
-import config from '../../keystatic.config';
+import { decode } from '../cms/codec';
+import { sectionById, type Section } from '../cms/schema';
 
-export const reader = createReader(process.cwd(), config);
+type Any = Record<string, any>;
+type Item = { slug: string; entry: Any };
 
-const byOrder = <T extends { entry: { order: number | null } }>(items: T[]) =>
-  items.sort((a, b) => (a.entry.order ?? 0) - (b.entry.order ?? 0));
+const root = process.cwd();
+const section = (id: string) => sectionById(id) as Section;
 
-export async function loadSite() {
-  const [profile, vaylo, capabilities, projects, experience, posts] = await Promise.all([
-    reader.singletons.profile.readOrThrow(),
-    reader.singletons.vaylo.readOrThrow(),
-    reader.collections.capabilities.all(),
-    reader.collections.projects.all(),
-    reader.collections.experience.all(),
-    loadPosts(),
-  ]);
+function readSingleton(id: string): Any {
+  const s = section(id);
+  return decode(s, fs.readFileSync(path.join(root, s.path), 'utf8'));
+}
+
+function readCollection(id: string): Item[] {
+  const s = section(id);
+  const dir = path.join(root, s.path);
+  return fs
+    .readdirSync(dir)
+    .filter((f) => /\.(ya?ml|md)$/.test(f))
+    .map((f) => ({ slug: f.replace(/\.[^.]+$/, ''), entry: decode(s, fs.readFileSync(path.join(dir, f), 'utf8')) }))
+    .sort((a, b) => (a.entry.order ?? 0) - (b.entry.order ?? 0));
+}
+
+export function loadSite() {
   return {
-    profile,
-    vaylo,
-    capabilities: byOrder(capabilities),
-    projects: byOrder(projects),
-    experience: byOrder(experience),
-    posts,
+    profile: readSingleton('profile'),
+    vaylo: readSingleton('vaylo'),
+    capabilities: readCollection('capabilities'),
+    projects: readCollection('projects'),
+    experience: readCollection('experience'),
+    posts: loadPosts(),
   };
 }
 
-export async function loadPosts() {
-  const posts = await reader.collections.posts.all();
-  return posts
+export const loadProfile = () => readSingleton('profile');
+
+export function loadPosts(): Item[] {
+  return readCollection('posts')
     .filter((p) => !p.entry.draft)
-    .sort((a, b) => b.entry.date.localeCompare(a.entry.date));
+    .sort((a, b) => String(b.entry.date).localeCompare(String(a.entry.date)));
 }
 
-export async function renderPost(slug: string) {
-  const post = await reader.collections.posts.readOrThrow(slug);
-  const { node } = await post.content();
-  const html = Markdoc.renderers.html(Markdoc.transform(node));
+export function renderPost(slug: string) {
+  const post = readCollection('posts').find((p) => p.slug === slug);
+  if (!post) throw new Error(`Post not found: ${slug}`);
+  const html = Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(String(post.entry.body ?? ''))));
   const words = html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
-  return { post, html, minutes: Math.max(1, Math.round(words / 220)) };
+  return { post: post.entry, html, minutes: Math.max(1, Math.round(words / 220)) };
 }

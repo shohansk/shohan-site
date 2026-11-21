@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Nav from '../../components/Nav.astro';
-import { loadPosts, reader, renderPost } from '../../lib/content';
+import { loadPosts, loadProfile, renderPost } from '../../lib/content';
 
 export async function getStaticPaths() {
   const posts = await loadPosts();
@@ -9,8 +9,8 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
-const profile = await reader.singletons.profile.readOrThrow();
-const { post, html, minutes } = await renderPost(slug!);
+const profile = loadProfile();
+const { post, html, minutes } = renderPost(slug!);
 const date = new Date(post.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
 ---
 <Base title={`${post.title} — ${profile.name}`} description={post.summary} accent={profile.accent}>
