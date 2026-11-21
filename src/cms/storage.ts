@@ -7,6 +7,7 @@ export interface Storage {
   list(dir: string): Promise<string[]>;
   read(file: string): Promise<string | null>;
   write(file: string, data: string | Buffer, message: string): Promise<void>;
+  writeMany(files: { path: string; data: string }[], message: string): Promise<void>;
   remove(file: string, message: string): Promise<void>;
 }
 
@@ -33,6 +34,12 @@ function localStorage(root: string): Storage {
       await fs.mkdir(path.dirname(abs(file)), { recursive: true });
       await fs.writeFile(abs(file), data);
     },
+    async writeMany(files) {
+      for (const f of files) {
+        assertSafe(f.path);
+        await fs.writeFile(abs(f.path), f.data);
+      }
+    },
     async remove(file) {
       assertSafe(file);
       await fs.rm(abs(file), { force: true });
@@ -40,12 +47,31 @@ function localStorage(root: string): Storage {
   };
 }
 
+class Conflict extends Error {
+  constructor() {
+    super('Someone else saved at the same moment. Please save again.');
+  }
+}
+
+async function retry<T>(fn: () => Promise<T>, attempts = 4): Promise<T> {
+  for (let i = 1; ; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (!(e instanceof Conflict) || i >= attempts) throw e;
+      await new Promise((r) => setTimeout(r, 300 * i + Math.random() * 300));
+    }
+  }
+}
+
 function githubStorage(token: string, repo: string, branch: string): Storage {
-  const api = `https://api.github.com/repos/${repo}/contents`;
+  const root = `https://api.github.com/repos/${repo}`;
+  const api = `${root}/contents`;
   const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json', 'User-Agent': 'shohan-site-admin' };
 
   const call = async (url: string, init: RequestInit = {}) => {
-    const res = await fetch(url, { ...init, headers: { ...headers, ...(init.headers ?? {}) } });
+    const res = await fetch(url, { cache: 'no-store', ...init, headers: { ...headers, ...(init.headers ?? {}) } });
+    if (res.status === 409 || (res.status === 422 && init.method === 'PATCH')) throw new Conflict();
     if (res.status === 401) throw new Error('GitHub rejected the token (expired or wrong). Update GITHUB_TOKEN in Vercel.');
     if (res.status === 403) throw new Error(`GitHub token can't write to ${repo}. Give it "Contents: Read and write" on that repo.`);
     if (!res.ok && res.status !== 404) throw new Error(`GitHub ${res.status}: ${await res.text()}`);
@@ -72,7 +98,18 @@ function githubStorage(token: string, repo: string, branch: string): Storage {
     async write(file, data, message) {
       assertSafe(file);
       const content = Buffer.from(data).toString('base64');
-      await call(`${api}/${file}`, { method: 'PUT', body: JSON.stringify({ message, content, branch, sha: await sha(file) }) });
+      await retry(async () => call(`${api}/${file}`, { method: 'PUT', body: JSON.stringify({ message, content, branch, sha: await sha(file) }) }));
+    },
+    async writeMany(files, message) {
+      files.forEach((f) => assertSafe(f.path));
+      const post = async (path: string, body: unknown) => (await call(`${root}${path}`, { method: 'POST', body: JSON.stringify(body) })).json();
+      await retry(async () => {
+        const head = (await (await call(`${root}/git/ref/heads/${branch}`)).json()).object.sha as string;
+        const base = (await (await call(`${root}/git/commits/${head}`)).json()).tree.sha as string;
+        const tree = await post('/git/trees', { base_tree: base, tree: files.map((f) => ({ path: f.path, mode: '100644', type: 'blob', content: f.data })) });
+        const commit = await post('/git/commits', { message, tree: tree.sha, parents: [head] });
+        await call(`${root}/git/refs/heads/${branch}`, { method: 'PATCH', body: JSON.stringify({ sha: commit.sha }) });
+      });
     },
     async remove(file, message) {
       assertSafe(file);

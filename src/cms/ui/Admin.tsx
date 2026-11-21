@@ -172,8 +172,8 @@ function Shell({ mode, onSignOut }: { mode: string; onSignOut: () => void }) {
     setData({ ...data!, [sectionId]: list });
     if (draft && slug) setDraft({ ...draft, order: list.find((i) => i.slug === slug)!.entry.order });
     try {
-      await Promise.all(list.map((i) => api('/api/admin/content', send('PUT', { section: sectionId, slug: i.slug, entry: slug === i.slug && draft ? { ...draft, order: i.entry.order } : i.entry }))));
-      if (slug) setDirty(false);
+      const changed = list.filter((i) => i.entry.order !== items.find((o) => o.slug === i.slug)?.entry.order);
+      if (changed.length) await api('/api/admin/content', send('PATCH', { section: sectionId, items: changed.map((i) => ({ slug: i.slug, entry: i.entry })) }));
       flash({ kind: 'ok', text: 'Order saved.' });
     } catch (e) {
       flash({ kind: 'err', text: (e as Error).message });

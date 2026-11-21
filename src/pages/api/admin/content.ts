@@ -70,6 +70,16 @@ export const PUT: APIRoute = guard(async ({ request, cookies }) => {
   return json({ ok: true, slug, entry });
 });
 
+export const PATCH: APIRoute = guard(async ({ request, cookies }) => {
+  if (!isAuthed(cookies)) return unauthorized();
+  const { section, items } = (await request.json()) as { section: string; items: { slug: string; entry: Entry }[] };
+  const s = sectionById(section);
+  if (!s || s.kind !== 'collection' || !Array.isArray(items) || items.some((i) => !/^[\w-]+$/.test(i.slug))) return json({ error: 'Bad request.' }, 400);
+  const files = items.map((i) => ({ path: `${s.path}/${i.slug}${fileExt(s)}`, data: encode(s, clean(s, i.entry)) }));
+  await getStorage().writeMany(files, `content: reorder ${s.label}`);
+  return json({ ok: true });
+});
+
 export const DELETE: APIRoute = guard(async ({ request, cookies }) => {
   if (!isAuthed(cookies)) return unauthorized();
   const { section, slug } = (await request.json()) as { section: string; slug: string };
