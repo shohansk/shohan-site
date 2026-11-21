@@ -1,0 +1,6 @@
+title: Data pipelines & dashboards
+order: 4
+icon: chart
+color: "#B794FF"
+description: ETL jobs, BigQuery analytics and slow jobs made fast — one went from 30 minutes to 20 seconds.
+tools: bigquery · pyspark · pandas · sql

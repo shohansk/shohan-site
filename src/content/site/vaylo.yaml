@@ -1,0 +1,40 @@
+heading: 'Vaylo: the booking system behind Swedish tour operators'
+intro: >-
+  An all-in-one SaaS platform where tour operators sell trips, take payments,
+  manage suppliers and hotels, and run their accounting. One Django codebase
+  serves many operators, each with their own database.
+modules:
+  - { name: Gift cards, detail: buy · redeem · Fortnox sync, builtByMe: true }
+  - { name: Cancellation policies, detail: frozen per booking · audit, builtByMe: true }
+  - { name: Payment gateways, detail: NeroPay · Zaver, builtByMe: true }
+  - { name: Hotel auto-import, detail: Google Places API, builtByMe: true }
+  - { name: Booking activity log, detail: 'every event, for support', builtByMe: true }
+  - { name: Surveys & emails, detail: Netigate · lifecycle mail, builtByMe: true }
+  - { name: Tours & packages, detail: pricing · fees · rooms, builtByMe: false }
+  - { name: Payments & receipts, detail: deposits · invoices, builtByMe: false }
+  - { name: Suppliers, detail: hotels · transport, builtByMe: false }
+  - { name: Customer portal, detail: travellers · bookings, builtByMe: false }
+stack:
+  - python 3.12
+  - django 6
+  - drf
+  - postgresql
+  - celery
+  - multi-tenant routing
+  - pytest
+  - sentry
+feature:
+  title: Gift cards for tour operators
+  body: >-
+    An embeddable widget any operator can drop on their site. Buyers pick an
+    amount, write a greeting, choose or upload a card design and see it live —
+    then pay. The card works at checkout, and every sale and redemption flows
+    into Fortnox automatically.
+  bullets:
+    - purchase & redemption APIs
+    - live card preview
+    - Fortnox accounting sync
+    - public API documentation
+  url: https://giftcard.bookingsystem.se/
+  cardAmount: 1 500 kr
+  cardGreeting: Äventyret väntar!

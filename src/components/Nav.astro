@@ -1,0 +1,17 @@
+---
+interface Props {
+  cv?: string | null;
+  home?: string;
+}
+const { cv, home = '' } = Astro.props;
+const links = ['vaylo', 'build', 'projects', 'experience', 'contact'];
+---
+<header class="topbar">
+  <nav class="wrap">
+    <a href={home || '#top'} class="brand"><span class="accent">shohan</span><span class="muted">@dev:~$</span><span class="cursor"></span></a>
+    <div class="navlinks">
+      {links.map((l) => <a href={`${home}#${l}`}>./{l}</a>)}
+      {cv && <a class="cvbtn" href={cv} download>cv.pdf ↓</a>}
+    </div>
+  </nav>
+</header>

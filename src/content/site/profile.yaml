@@ -1,0 +1,45 @@
+name: Abdul Alim Shohan
+firstName: Abdul Alim
+lastName: Shohan
+role: Software Engineer
+company: Strativ AB → Vaylo
+location: Dhaka, Bangladesh
+intro: >-
+  Software engineer. I build the backend of Vaylo — one of Sweden's leading
+  booking systems for tour operators — and small, sharp tools for developers on
+  the side.
+openToWork: true
+accent: '#3DDC97'
+languages:
+  - Python
+  - Go
+  - JavaScript
+  - SQL
+commits:
+  - 'feat: gift cards + Fortnox accounting'
+  - 'feat: NeroPay & Zaver checkout'
+  - 'perf: partner crons 30 min → 20 s'
+stats:
+  - value: 4+ yrs
+    label: shipping production code
+    url: ''
+  - value: '5'
+    label: third-party integrations live
+    url: ''
+  - value: 99%
+    label: faster after a cron rewrite
+    url: ''
+  - value: AWS ↗
+    label: Solutions Architect – Associate
+    url: https://www.credly.com/badges/a9bc7ac0-10a8-40bd-89aa-571498ebd0f5
+certification:
+  name: AWS Certified Solutions Architect – Associate
+  short: AWS SAA-C03
+  date: Oct 2026
+  url: https://www.credly.com/badges/a9bc7ac0-10a8-40bd-89aa-571498ebd0f5
+email: shohansk985@gmail.com
+github: https://github.com/shohansk
+linkedin: https://linkedin.com/in/abdul-alim-shohan-99084b196
+cv: /cv/Abdul_Alim_Shohan_CV.pdf
+contactHeadline: Let's build something solid.
+contactBlurb: Hiring, a backend or API project, or just a question — my inbox is open.

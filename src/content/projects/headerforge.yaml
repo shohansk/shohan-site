@@ -1,0 +1,12 @@
+title: HeaderForge
+order: 3
+size: medium
+kind: Chrome extension
+stack: manifest v3 · javascript
+summary: >-
+  Edit request and response headers per profile, with smart autocomplete, URL
+  filters and a built-in API tester that copies as cURL.
+bullets: []
+image: /images/projects/headerforge-popup-autocomplete.png
+url: https://github.com/shohansk/HeaderForge
+linkLabel: github ↗

@@ -1,0 +1,6 @@
+title: Web widgets & extensions
+order: 6
+icon: code
+color: "#E6EAF0"
+description: Embeddable widgets, Chrome extensions and small, fast sites in plain JavaScript or Astro.
+tools: javascript · chrome mv3 · astro

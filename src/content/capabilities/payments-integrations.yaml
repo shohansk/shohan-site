@@ -1,0 +1,6 @@
+title: Payments & integrations
+order: 2
+icon: card
+color: "#5CC8FF"
+description: Checkout flows, gift cards, accounting sync and any third-party API that has to work every time.
+tools: neropay · zaver · fortnox · netigate

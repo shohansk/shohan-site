@@ -1,0 +1,227 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import Icon from '../components/Icon.astro';
+import { loadSite } from '../lib/content';
+
+const { profile: p, vaylo: v, capabilities, projects, experience, posts } = await loadSite();
+const featured = projects.filter((x) => x.entry.size === 'featured');
+const medium = projects.filter((x) => x.entry.size === 'medium');
+const small = projects.filter((x) => x.entry.size === 'small');
+const statColors = ['var(--accent)', 'var(--blue)', 'var(--purple)', 'var(--gold)'];
+const langStyles = [
+  'background:#0E1A15;border-color:#1F3A2E;color:#9FE8C6',
+  'background:#121B26;border-color:#1E3346;color:#9ED8FF',
+  'background:#1C170B;border-color:#4A3B16;color:#F2C879',
+  'background:#1B1626;border-color:#33284A;color:#D2C2FF',
+  'background:#22140F;border-color:#4A2A1E;color:#FFB79A',
+];
+const langs = [...p.languages, 'Swift'];
+const fmtDate = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+---
+<Base title={`${p.name} — ${p.role}`} description={p.intro} accent={p.accent}>
+  <Nav cv={p.cv} />
+
+  <main>
+    <section id="top" class="wrap hero">
+      <div class="hero-copy">
+        <div class="row">
+          {p.openToWork && <span class="pill pill-green"><span class="live"></span>open to new opportunities</span>}
+          {p.certification.url && <a class="pill pill-gold" href={p.certification.url}>AWS Certified · Solutions Architect ↗</a>}
+        </div>
+        <h1>{p.firstName}<br /><span class="accent">{p.lastName}</span></h1>
+        <p class="hero-intro">{p.intro}</p>
+        <div class="row">
+          <a class="btn btn-accent" href="#build">What I can build →</a>
+          {p.cv && <a class="btn btn-ghost" href={p.cv} download>Download CV</a>}
+        </div>
+      </div>
+
+      <div class="card term" aria-label="Profile summary as a terminal">
+        <div class="term-bar">
+          <span class="dot" style="background:#FF5F57"></span><span class="dot" style="background:#FEBC2E"></span><span class="dot" style="background:#28C840"></span>
+          <span class="mono muted" style="margin-left:10px;font-size:12px">zsh — ~/shohan</span>
+        </div>
+        <div class="term-body">
+          <div><span class="accent">❯</span> whoami --json</div>
+          <div class="muted">{'{'}</div>
+          <div class="in"><span class="k">"role"</span>: <span class="s">"{p.role}"</span>,</div>
+          <div class="in"><span class="k">"at"</span>: <span class="s">"{p.company}"</span>,</div>
+          <div class="in"><span class="k">"speaks"</span>: [{p.languages.map((l, i) => <><span class="s">"{l}"</span>{i < p.languages.length - 1 && ', '}</>)}],</div>
+          {p.certification.short && <div class="in"><span class="k">"cloud"</span>: <span class="s">"{p.certification.short}"</span>,</div>}
+          <div class="in"><span class="k">"based_in"</span>: <span class="s">"{p.location}"</span></div>
+          <div class="muted">{'}'}</div>
+          <div style="margin-top:12px"><span class="accent">❯</span> git log --oneline -{p.commits.length}</div>
+          {p.commits.map((c, i) => <div><span class="s">{['a1f3c09', '7be21d4', 'c90e5a2', '4d02b7e', 'e81f6a3'][i % 5]}</span> <span class="soft">{c}</span></div>)}
+          <div style="margin-top:12px"><span class="accent">❯</span> <span class="cursor"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" style="padding-bottom:72px">
+      <div class="card stats">
+        {p.stats.map((s, i) =>
+          s.url
+            ? <a class="stat" href={s.url}><b style={`color:${statColors[i % 4]}`}>{s.value}</b><span>{s.label}</span></a>
+            : <div class="stat"><b style={`color:${statColors[i % 4]}`}>{s.value}</b><span>{s.label}</span></div>
+        )}
+      </div>
+    </section>
+
+    <section id="vaylo" class="wrap section" style="gap:28px">
+      <div class="section-head">
+        <div><span class="eyebrow">01 — day job</span><h2 class="h2">{v.heading}</h2></div>
+        <p class="lede">{v.intro}</p>
+      </div>
+      <div class="card map">
+        <div class="legend">
+          <span>system map</span>
+          <span><i style="background:var(--accent)"></i>built by me &nbsp;&nbsp; <i style="border:1px solid #3A4352"></i>worked on</span>
+        </div>
+        <div class="grid" style="--min:200px;gap:12px">
+          {v.modules.map((m) => <div class:list={['module', { mine: m.builtByMe }]}><b>{m.name}</b><span>{m.detail}</span></div>)}
+        </div>
+        <div class="stackline">{v.stack.map((s) => <span>{s}</span>)}</div>
+      </div>
+
+      <article class="feature">
+        <div class="feature-copy">
+          <div class="kind-row"><span class="tag" style="background:#14201A;border:1px solid var(--green-line);color:var(--green-soft)">★ live in production</span><span class="mono muted" style="font-size:12px">built solo, end to end</span></div>
+          <h3>{v.feature.title}</h3>
+          <p>{v.feature.body}</p>
+          <div class="grid soft" style="--min:180px;gap:10px;font-size:14px">{v.feature.bullets.map((b) => <span>→ {b}</span>)}</div>
+          {v.feature.url && (
+            <div class="row">
+              <a class="btn btn-accent" href={v.feature.url} target="_blank" rel="noopener">Try the live widget ↗</a>
+              <span class="mono muted" style="padding:12px 4px;font-size:13px">{v.feature.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+            </div>
+          )}
+        </div>
+        <div class="giftcard-wrap">
+          <div class="giftcard float" aria-hidden="true">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start"><span class="mono" style="font-size:12px;color:var(--green-soft)">PRESENTKORT</span><span style="font-size:26px;font-weight:700;letter-spacing:-.03em">{v.feature.cardAmount}</span></div>
+            <span style="font-size:22px;font-weight:600;letter-spacing:-.02em">{v.feature.cardGreeting}</span>
+            <div class="mono" style="display:flex;justify-content:space-between;font-size:13px;color:var(--green-soft)"><span>XXXX-XXXX-XXXX</span><span>valid 1 yr</span></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section id="build" class="wrap section">
+      <div class="section-head">
+        <div><span class="eyebrow">02 — capabilities</span><h2 class="h2">What I can build for you</h2></div>
+        <div class="row" style="gap:8px">{langs.map((l, i) => <span class="lang" style={langStyles[i % langStyles.length]}>{l}</span>)}</div>
+      </div>
+      <div class="grid">
+        {capabilities.map(({ entry: c }) => (
+          <div class="card cap">
+            <Icon name={c.icon} color={c.color || '#3DDC97'} />
+            <h3>{c.title}</h3>
+            <p>{c.description}</p>
+            <span class="tools">{c.tools}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="projects" class="wrap section">
+      <div class="section-head">
+        <div><span class="eyebrow">03 — pet projects</span><h2 class="h2">Tools I built for myself</h2></div>
+        <p class="lede">Native macOS apps and a Chrome extension I use every day. Everything runs locally — nothing leaves the machine.</p>
+      </div>
+
+      {featured.map(({ entry: x }) => (
+        <article class="proj-featured">
+          <div class="copy">
+            <div class="kind-row"><span class="tag" style="background:#14201A;border:1px solid var(--green-line);color:var(--green-soft)">{x.kind}</span><span class="mono muted" style="font-size:12px">{x.stack}</span></div>
+            <h3>{x.url ? <a class="nolink" href={x.url}>{x.title}</a> : x.title}</h3>
+            <p style="font-size:18px;color:#C9D1DC">{x.summary}</p>
+            {x.secondaryImage && <img src={x.secondaryImage} alt={`${x.title} in the menu bar`} loading="lazy" style="max-width:420px;border-radius:10px;border:1px solid var(--green-line)" />}
+            {x.bullets.length > 0 && <ul>{x.bullets.map((b) => <li>{b}</li>)}</ul>}
+            {x.url && <a class="mono accent" style="font-size:13px" href={x.url}>{x.linkLabel || 'view ↗'}</a>}
+          </div>
+          {x.image && <div class="shot"><img src={x.image} alt={`${x.title} screenshot`} loading="lazy" style="max-width:400px;border-radius:14px" /></div>}
+        </article>
+      ))}
+
+      <div class="grid" style="--min:420px">
+        {medium.map(({ entry: x }) => (
+          <a class="card proj-med" href={x.url || '#projects'}>
+            <div class="copy">
+              <div class="kind-row"><span class="tag" style="background:#121B26;border:1px solid #1E3346;color:#9ED8FF">{x.kind}</span><span class="mono muted" style="font-size:12px">{x.stack}</span></div>
+              <h3>{x.title}</h3>
+              <p class="soft">{x.summary}</p>
+            </div>
+            {x.image && <div class="shot"><img src={x.image} alt={`${x.title} screenshot`} loading="lazy" /></div>}
+          </a>
+        ))}
+      </div>
+
+      <div class="grid" style="--min:260px">
+        {small.map(({ entry: x }) => (
+          <a class="card proj-small" href={x.url || '#projects'}>
+            <span class="mono" style="font-size:12px;color:var(--muted)">{x.linkLabel}</span>
+            <h3>{x.title}</h3>
+            <p class="soft" style="font-size:15px">{x.summary}</p>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section id="experience" class="wrap section">
+      <div class="split">
+        <div><span class="eyebrow">04 — experience</span><h2 class="h2">Where I've worked</h2></div>
+        <div class="timeline">
+          {experience.map(({ entry: e }) => (
+            <div class="tl-item">
+              <span class:list={['tl-dot', e.dot]}></span>
+              <span class="mono muted" style="font-size:13px">{e.period}</span>
+              <h3>{e.url ? <a class="nolink" href={e.url}>{e.title} ↗</a> : e.title}</h3>
+              <p>{e.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="writing" class="wrap section">
+      <div class="section-head"><div><span class="eyebrow">05 — blog</span><h2 class="h2">Notes &amp; write-ups</h2></div></div>
+      <div class="card ls">
+        <div class="ls-head"><span class="accent">❯</span> ls -lt posts/</div>
+        {posts.length === 0 && <div class="empty">— first post coming soon</div>}
+        {posts.map(({ slug, entry }) => (
+          <a href={`/blog/${slug}/`}><span class="date">{fmtDate(entry.date)}</span><span class="t">{entry.title}</span><span class="muted">read →</span></a>
+        ))}
+      </div>
+    </section>
+
+    <section id="contact" class="wrap contact">
+      <div>
+        <span class="eyebrow">06 — contact</span>
+        <h2>{p.contactHeadline}</h2>
+        <p class="soft">{p.contactBlurb}</p>
+        <div class="links">
+          <a href={`mailto:${p.email}`}>→ {p.email}</a>
+          {p.linkedin && <a href={p.linkedin}>→ linkedin.com/in/abdul-alim-shohan</a>}
+          {p.github && <a href={p.github}>→ {p.github.replace(/^https?:\/\//, '')}</a>}
+          {p.certification.url && <a href={p.certification.url}>→ credly · aws badge</a>}
+        </div>
+        {p.cv && <a class="btn btn-ghost" style="align-self:flex-start" href={p.cv} download>Download CV (PDF) ↓</a>}
+      </div>
+      <form class="card form" action={`mailto:${p.email}`} method="post" enctype="text/plain">
+        <div class="muted"><span class="accent">❯</span> send --to shohan</div>
+        <label for="c-name">--name</label>
+        <input id="c-name" name="name" type="text" placeholder="Your name" required />
+        <label for="c-email">--email</label>
+        <input id="c-email" name="email" type="email" placeholder="you@company.com" required />
+        <label for="c-msg">--message</label>
+        <textarea id="c-msg" name="message" rows="4" placeholder="What are you working on?" required></textarea>
+        <button class="btn btn-accent" type="submit">Send message ↵</button>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap"><span>© {new Date().getFullYear()} {p.name} · Dhaka</span><span>built with care · <span class="accent">●</span> all systems normal</span></div>
+  </footer>
+</Base>

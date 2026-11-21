@@ -1,0 +1,12 @@
+title: PortPilot
+order: 2
+size: medium
+kind: macOS menu bar
+stack: swift · menubarextra
+summary: >-
+  A radar for every dev server on your Mac: port, type, project, health, uptime
+  and memory — open, copy, reveal or stop in one click.
+bullets: []
+image: /images/projects/portpilot-panel.png
+url: https://github.com/shohansk/PortPilot
+linkLabel: github ↗

@@ -1,0 +1,6 @@
+title: Cloud architecture on AWS
+order: 3
+icon: cloud
+color: "#F2C879"
+description: Secure, resilient and cost-aware setups — the four pillars I was certified on.
+tools: aws saa-c03 · docker · ci/cd

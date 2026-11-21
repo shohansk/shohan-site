@@ -1,0 +1,17 @@
+title: AgentPill
+order: 1
+size: featured
+kind: macOS app
+stack: swift · swiftui · appkit
+summary: >-
+  A pill that lives in the MacBook notch and watches every Claude Code session —
+  who's working, who's waiting for you, what finished.
+bullets:
+  - Allow or deny tool permissions straight from the pill
+  - Chime and peek when a task finishes; quiet mode
+  - A robot companion whose eyes follow your pointer
+  - One binary is both the app and the hook · ~1% idle CPU
+image: /images/projects/agentpill-panel.png
+secondaryImage: /images/projects/agentpill-menubar-pill.png
+url: https://github.com/shohansk/AgentPill
+linkLabel: github ↗
