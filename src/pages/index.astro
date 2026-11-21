@@ -127,7 +127,7 @@ const fmtDate = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: '2
     <section id="projects" class="wrap section">
       <div class="section-head">
         <div><span class="eyebrow">03 — pet projects</span><h2 class="h2">Tools I built for myself</h2></div>
-        <p class="lede">Native macOS apps and a Chrome extension I use every day. Everything runs locally — nothing leaves the machine.</p>
+        <p class="lede">A mobile app, native macOS tools and a Chrome extension I use every day. Everything runs locally — your data never leaves the device.</p>
       </div>
 
       {featured.map(({ entry: x }) => (
@@ -136,11 +136,20 @@ const fmtDate = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: '2
             <div class="kind-row"><span class="tag" style="background:#14201A;border:1px solid var(--green-line);color:var(--green-soft)">{x.kind}</span><span class="mono muted" style="font-size:12px">{x.stack}</span></div>
             <h3>{x.url ? <a class="nolink" href={x.url}>{x.title}</a> : x.title}</h3>
             <p style="font-size:18px;color:#C9D1DC">{x.summary}</p>
-            {x.secondaryImage && <img src={x.secondaryImage} alt={`${x.title} in the menu bar`} loading="lazy" style="max-width:420px;border-radius:10px;border:1px solid var(--green-line)" />}
+            {x.secondaryImage && x.screenshotStyle !== 'phone' && <img src={x.secondaryImage} alt={`${x.title} in the menu bar`} loading="lazy" style="max-width:420px;border-radius:10px;border:1px solid var(--green-line)" />}
             {x.bullets.length > 0 && <ul>{x.bullets.map((b) => <li>{b}</li>)}</ul>}
-            {x.url && <a class="mono accent" style="font-size:13px" href={x.url}>{x.linkLabel || 'view ↗'}</a>}
+            <div class="row" style="gap:8px 24px">
+              {x.url && <a class="mono accent" style="font-size:13px" href={x.url}>{x.linkLabel || 'view ↗'}</a>}
+              {x.secondaryUrl && <a class="mono" style="font-size:13px" href={x.secondaryUrl}>{x.secondaryLabel || 'more ↗'}</a>}
+            </div>
           </div>
-          {x.image && <div class="shot"><img src={x.image} alt={`${x.title} screenshot`} loading="lazy" style="max-width:400px;border-radius:14px" /></div>}
+          {x.image && x.screenshotStyle === 'phone' && (
+            <div class="shot phones">
+              <img src={x.image} alt={`${x.title} dashboard screen`} loading="lazy" />
+              {x.secondaryImage && <img src={x.secondaryImage} alt={`${x.title} detail screen`} loading="lazy" />}
+            </div>
+          )}
+          {x.image && x.screenshotStyle !== 'phone' && <div class="shot"><img src={x.image} alt={`${x.title} screenshot`} loading="lazy" style="max-width:400px;border-radius:14px" /></div>}
         </article>
       ))}
 

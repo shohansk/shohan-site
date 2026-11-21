@@ -134,6 +134,9 @@ h1, h2, h3, p { margin: 0; }
 .proj-featured .copy { flex: 999 1 420px; min-width: 0; padding: clamp(28px, 4vw, 48px); display: flex; flex-direction: column; gap: 18px; }
 .proj-featured h3 { font-size: 38px; font-weight: 700; letter-spacing: -.03em; line-height: 1.05; }
 .proj-featured .shot { flex: 1 1 360px; min-width: 0; padding: 32px; background: #0a120e; display: flex; align-items: center; justify-content: center; }
+.proj-featured .shot.phones { gap: 16px; align-items: flex-start; }
+.proj-featured .shot.phones img { width: calc(50% - 8px); max-width: 220px; border-radius: 22px; border: 6px solid #1a2029; box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .8); }
+.proj-featured .shot.phones img:nth-child(2) { margin-top: 48px; }
 .proj-featured ul { margin: 0; padding-left: 18px; color: var(--ink-2); display: flex; flex-direction: column; gap: 6px; }
 .proj-med { border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; }
 .proj-med .copy { padding: 28px 28px 0; display: flex; flex-direction: column; gap: 12px; }

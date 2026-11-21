@@ -1,0 +1,21 @@
+title: Money Manager
+order: 2
+size: featured
+screenshotStyle: phone
+kind: Android & iPhone app
+stack: react 19 · typescript · capacitor · sqlite
+summary: >-
+  A private, offline personal finance app: expenses, income, budgets,
+  investments with profit and ROI, loans and savings goals. No account, no
+  server, no ads — every number stays on the phone.
+bullets:
+  - Money stored as integer thousandths, so totals never drift
+  - Balances, budgets and ROI derived from entries, never stored
+  - Versioned SQLite migrations, PIN lock and JSON backups
+  - Any currency · optional Django + DRF sync API
+image: /images/projects/money-manager-dashboard.webp
+secondaryImage: /images/projects/money-manager-investment.webp
+url: https://shohansk.github.io/money-manager-site/
+linkLabel: website ↗
+secondaryUrl: https://shohansk.github.io/money-manager-site/app/
+secondaryLabel: try the web app ↗

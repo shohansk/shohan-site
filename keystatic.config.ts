@@ -103,6 +103,14 @@ export default config({
             { label: 'Small (text only)', value: 'small' },
           ],
         }),
+        screenshotStyle: fields.select({
+          label: 'Screenshot style (featured only)',
+          defaultValue: 'desktop',
+          options: [
+            { label: 'Desktop panel', value: 'desktop' },
+            { label: 'Two phone screens side by side', value: 'phone' },
+          ],
+        }),
         kind: text('Kind (e.g. macOS app)'),
         stack: text('Stack line'),
         summary: text('Summary', true),
@@ -111,6 +119,8 @@ export default config({
         secondaryImage: fields.image({ label: 'Extra image (featured only)', directory: 'public/images/projects', publicPath: '/images/projects/' }),
         url: fields.url({ label: 'Link (live site or repo)' }),
         linkLabel: text('Link label (e.g. github ↗)'),
+        secondaryUrl: fields.url({ label: 'Second link (optional)' }),
+        secondaryLabel: text('Second link label'),
       },
     }),
     experience: collection({
